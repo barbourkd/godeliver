@@ -18,20 +18,55 @@ func TestEnqueue(t *testing.T) {
 }
 
 func TestDequeue(t *testing.T) {
-	scheduler := Scheduler{}
-	firstDoc := document.NewDocument("First Doc", "Test Contents")
-	secondDoc := document.NewDocument("Second Doc", "Test Contents")
+	t.Run("multiple documents in queue", func(t *testing.T) {
+		scheduler := Scheduler{}
+		firstDoc := document.NewDocument("First Doc", "Test Contents")
+		secondDoc := document.NewDocument("Second Doc", "Test Contents")
 
-	scheduler.Enqueue(firstDoc)
-	scheduler.Enqueue(secondDoc)
+		scheduler.Enqueue(firstDoc)
+		scheduler.Enqueue(secondDoc)
 
-	got := scheduler.Dequeue()
+		got, _ := scheduler.Dequeue()
 
-	assertDocument(t, got, firstDoc)
+		assertDocument(t, got, firstDoc)
 
-	if scheduler.Length() != 1 {
-		t.Errorf("wrong number of docs in queue")
-	}
+		if scheduler.Length() != 1 {
+			t.Errorf("wrong number of docs in queue")
+		}
+	})
+
+	t.Run("empty queue", func(t *testing.T) {
+		scheduler := Scheduler{}
+
+		_, err := scheduler.Dequeue()
+
+		if err == nil {
+			t.Errorf("expected an error dequeuing an empty queue")
+		}
+	})
+}
+
+func TestPeek(t *testing.T) {
+	t.Run("single document in queue", func(t *testing.T) {
+		scheduler := Scheduler{}
+		doc := document.NewDocument("First Doc", "Test Contents")
+
+		scheduler.Enqueue(doc)
+
+		got := scheduler.Peek()
+		assertDocument(t, got, doc)
+
+		if scheduler.Length() != 1 {
+			t.Error("wrong number of docs in queue")
+		}
+	})
+
+	t.Run("empty queue", func(t *testing.T) {
+		scheduler := Scheduler{}
+
+		// for now just don't want to error out, no big deal
+		scheduler.Peek()
+	})
 }
 
 func assertDocument(t *testing.T, got, want document.Document) {

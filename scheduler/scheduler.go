@@ -1,6 +1,8 @@
 package scheduler
 
 import (
+	"errors"
+
 	"github.com/barbourkd/docdeliver/document"
 )
 
@@ -15,10 +17,26 @@ func (s *Scheduler) Enqueue(doc document.Document) {
 }
 
 // Dequeue pops the first doc off the queue
-func (s *Scheduler) Dequeue() document.Document {
-	doc := s.queue[0]
+func (s *Scheduler) Dequeue() (document.Document, error) {
+	var doc document.Document
+
+	if s.Length() < 1 {
+		return doc, errors.New("attempting to dequeue from empty queue")
+	}
+
+	doc = s.queue[0]
 	s.queue = s.queue[1:]
 
+	return doc, nil
+}
+
+// Peek shows the first doc without dequeuing
+func (s *Scheduler) Peek() document.Document {
+	var doc document.Document
+
+	if s.Length() > 0 {
+		doc = s.queue[0]
+	}
 	return doc
 }
 
