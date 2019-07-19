@@ -12,7 +12,7 @@ func TestConfig(t *testing.T) {
 }
 
 func TestParseConfig(t *testing.T) {
-	config := ParseConfig("sample.cfg")
+	config, _ := ParseConfig("sample.cfg")
 	want := "My Cool Sample Config"
 
 	if config.Title != want {
@@ -23,5 +23,13 @@ func TestParseConfig(t *testing.T) {
 
 	if device.Type != "ReturnPrinter" {
 		t.Errorf("Device type incorrect")
+	}
+}
+
+func TestMissingConfig(t *testing.T) {
+	_, err := ParseConfig("beepboop.cfg")
+
+	if err == nil {
+		t.Error("Expected error but did not get anything")
 	}
 }
