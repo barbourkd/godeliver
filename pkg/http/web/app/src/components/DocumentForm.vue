@@ -6,7 +6,7 @@
                 ref="first"
                 type="text"
                 :class="{ 'has-error': submitting && invalidName }"
-                v-model="device.name"
+                v-model="document.name"
                 @focus="clearStatus"
                 @keypress="clearStatus"
             />
@@ -14,31 +14,31 @@
             <input
                 type="text"
                 :class="{ 'has-error': submitting && invalidStatus }"
-                v-model="device.status"
+                v-model="document.content"
                 @focus="clearStatus"
              />
              <p v-if="error && submitting" class="error-message">
                 ❗Please fill out all required fields
              </p>
              <p v-if="success" class="success-message">
-                 ✅ Device successfully added
+                 ✅ Document submitted to queue
             </p>
-            <button>Create Device</button>
+            <button>Submit Document</button>
         </form>
     </div>
 </template>
 
 <script>
 export default {
-    name: 'device-form',
+    name: 'document-form',
     data() {
         return {
             submitting: false,
             error: false,
             success: false,
-            device: {
+            document: {
                 name: '',
-                status: '',
+                content: '',
             },
         }
     },
@@ -47,16 +47,16 @@ export default {
             this.submitting = true
             this.clearStatus()
 
-            if (this.invalidName || this.invalidStatus) {
+            if (this.invalidName) {
                 this.error = true
                 return
             }
 
-            this.$emit('add:device', this.device)
+            this.$emit('submit:document', this.document)
             this.$refs.first.focus()
-            this.device = {
+            this.document = {
                 name: '',
-                status: '',
+                content: '',
             }
             this.error = false
             this.success = true
@@ -70,12 +70,8 @@ export default {
     },
     computed: {
         invalidName() {
-            return this.device.name === ''
+            return this.document.name === ''
         },
-
-        invalidStatus() {
-            return this.device.status === ''
-        }
     },
 }
 </script>

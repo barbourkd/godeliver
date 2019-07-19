@@ -3,6 +3,7 @@ package scheduler
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/barbourkd/docdeliver/devices"
 	"github.com/barbourkd/docdeliver/document"
@@ -29,6 +30,7 @@ func (s *Scheduler) Start() {
 				doc, _ := s.Dequeue()
 				s.devices[0].Print(doc)
 			}
+			time.Sleep(10 * time.Millisecond)
 		}
 
 		fmt.Print("Scheduler shutting down\n")

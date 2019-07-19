@@ -7,6 +7,7 @@
 
     <div v-if="docpage">
       <h1>Documents</h1>
+      <document-form @submit:document="submitDocument"/>
     </div>
 
     <div v-if="devicepage">
@@ -20,12 +21,14 @@
 <script>
 import DeviceTable from './components/DeviceTable.vue'
 import DeviceForm from './components/DeviceForm.vue'
+import DocumentForm from './components/DocumentForm.vue'
 
 export default {
   name: 'app',
   components: {
     DeviceTable,
-    DeviceForm
+    DeviceForm,
+    DocumentForm
   },
   data() {
     return {
@@ -37,7 +40,7 @@ export default {
   methods: {
     async getDevices() {
       try {
-        const response = await fetch('http://localhost:8081/devices')
+        const response = await fetch('./api/devices')
         const data = await response.json()
         this.devices = data
       } catch (error) {
@@ -53,6 +56,17 @@ export default {
       const newDevice = { ...device, id };
 
       this.devices = [...this.devices, newDevice]
+    },
+    async submitDocument(document) {
+      try {
+        const response = await fetch('./api/documents', {
+        method: 'POST',
+        body: JSON.stringify(document),
+        headers: { 'Content-type': 'application/json; charset=UTF-8' },
+        })
+      } catch (error) {
+        console.error("failed to submit document")
+      }
     },
     goToDocuments() {
       this.docpage = true
