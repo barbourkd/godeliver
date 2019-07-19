@@ -54,7 +54,7 @@ func TestDevices(t *testing.T) {
 		printer := devices.ReturnPrinter{}
 		scheduler.AddDevice(printer)
 
-		if len(scheduler.devices) != 1 {
+		if len(scheduler.Devices()) != 1 {
 			t.Error("expected one device on scheduler")
 		}
 	})

@@ -59,4 +59,6 @@ func main() {
 	})
 
 	app.Run(iris.Addr(":8081"))
+
+	scheduler.Stop()
 }

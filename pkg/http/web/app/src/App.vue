@@ -1,9 +1,19 @@
 <template>
   <div id="app" class="small-container">
-    <h1>Devices</h1>
-    <device-form @add:device="addDevice" />
+    <div id="menu" class="menu">
+      <button v-on:click="goToDevices" class="tab">Devices</button>
+      <button v-on:click="goToDocuments" class="tab">Documents</button>
+    </div>
 
-    <device-table :devices="devices"/>
+    <div v-if="docpage">
+      <h1>Documents</h1>
+    </div>
+
+    <div v-if="devicepage">
+      <h1>Devices</h1>
+      <device-form @add:device="addDevice" />
+      <device-table :devices="devices"/>
+    </div>
   </div>
 </template>
 
@@ -20,6 +30,8 @@ export default {
   data() {
     return {
       devices: [],
+      docpage: false,
+      devicepage: true,
     }
   },
   methods: {
@@ -41,6 +53,14 @@ export default {
       const newDevice = { ...device, id };
 
       this.devices = [...this.devices, newDevice]
+    },
+    goToDocuments() {
+      this.docpage = true
+      this.devicepage = false
+    },
+    goToDevices() {
+      this.docpage = false
+      this.devicepage = true
     }
   },
   mounted() {
@@ -57,5 +77,15 @@ export default {
 
   .small-container {
     max-width: 680px;
+  }
+
+  .menu {
+    padding: 1em;
+  }
+
+  .tab {
+    color: black;
+    background-color: aliceblue;
+    padding: 1em;
   }
 </style>
