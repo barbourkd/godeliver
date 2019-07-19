@@ -154,6 +154,6 @@ type SpyDevice struct {
 }
 
 func (s *SpyDevice) Print(doc document.Document) string {
-	s.output = doc.Content()
+	s.output = doc.Content
 	return ""
 }

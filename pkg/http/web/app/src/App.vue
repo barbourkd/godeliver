@@ -19,21 +19,19 @@ export default {
   },
   data() {
     return {
-      devices: [
-        {
-          id: 1,
-          name: "Email Device",
-          status: "Active"
-        },
-        {
-          id: 2,
-          name: "Print Device",
-          status: "Inactive"
-        },
-      ]
+      devices: [],
     }
   },
   methods: {
+    async getDevices() {
+      try {
+        const response = await fetch('http://localhost:8081/devices')
+        const data = await response.json()
+        this.devices = data
+      } catch (error) {
+        console.error(error)
+      }
+    },
     addDevice(device) {
       const lastId =
         this.devices.length > 0
@@ -44,6 +42,9 @@ export default {
 
       this.devices = [...this.devices, newDevice]
     }
+  },
+  mounted() {
+    this.getDevices()
   }
 }
 </script>

@@ -11,7 +11,7 @@ func TestReturnPrinter(t *testing.T) {
 	doc := document.NewDocument("Name", "Content")
 
 	got := printer.Print(doc)
-	want := doc.Content()
+	want := doc.Content
 
 	if got != want {
 		t.Errorf("got %q want %q", got, want)

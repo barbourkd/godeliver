@@ -8,8 +8,8 @@ func TestNewDocument(t *testing.T) {
 		content := "Content"
 		doc := NewDocument(name, content)
 
-		assertString(t, doc.Name(), name)
-		assertString(t, doc.Content(), content)
+		assertString(t, doc.Name, name)
+		assertString(t, doc.Content, content)
 	})
 }
 
