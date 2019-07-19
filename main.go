@@ -40,14 +40,14 @@ func main() {
 
 	// Web app config and start
 	app := iris.Default()
-	app.Get("/devices", func(ctx iris.Context) {
+
+	app.Get("/api/devices", func(ctx iris.Context) {
 		results := scheduler.Devices()
 
-		ctx.Header("Access-Control-Allow-Origin", "*")
 		ctx.JSON(results)
 	})
 
-	app.Post("/documents", func(ctx iris.Context) {
+	app.Post("/api/documents", func(ctx iris.Context) {
 		param := &document.Document{}
 		err := ctx.ReadJSON(param)
 		if err != nil {
