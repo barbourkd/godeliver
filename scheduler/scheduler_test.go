@@ -2,7 +2,9 @@ package scheduler
 
 import (
 	"testing"
+	"time"
 
+	"github.com/barbourkd/docdeliver/devices"
 	"github.com/barbourkd/docdeliver/document"
 )
 
@@ -46,6 +48,18 @@ func TestDequeue(t *testing.T) {
 	})
 }
 
+func TestDevices(t *testing.T) {
+	t.Run("add return printer", func(t *testing.T) {
+		scheduler := Scheduler{}
+		printer := devices.ReturnPrinter{}
+		scheduler.AddDevice(printer)
+
+		if len(scheduler.devices) != 1 {
+			t.Error("expected one device on scheduler")
+		}
+	})
+}
+
 func TestPeek(t *testing.T) {
 	t.Run("single document in queue", func(t *testing.T) {
 		scheduler := Scheduler{}
@@ -69,10 +83,77 @@ func TestPeek(t *testing.T) {
 	})
 }
 
+func TestRun(t *testing.T) {
+	t.Run("start", func(t *testing.T) {
+		scheduler := Scheduler{}
+		scheduler.Start()
+
+		if !scheduler.Running() {
+			t.Error("Started scheduler but it isn't running!")
+		}
+
+	})
+
+	t.Run("stop", func(t *testing.T) {
+		scheduler := Scheduler{}
+		scheduler.Start()
+		scheduler.Stop()
+
+		if scheduler.Running() {
+			t.Error("Stopped scheduler but it is still running")
+		}
+	})
+}
+
+func TestBasicScheduling(t *testing.T) {
+	t.Run("print queued doc to spy", func(t *testing.T) {
+		timeout := time.After(2 * time.Second)
+		done := make(chan bool)
+
+		scheduler := Scheduler{}
+		docName := "Test Doc"
+		docContent := "This should print!"
+		doc := document.NewDocument(docName, docContent)
+		device := SpyDevice{}
+
+		// Is passing this as a pointer the best way to do this?
+		scheduler.AddDevice(&device)
+		scheduler.Enqueue(doc)
+		scheduler.Start()
+
+		go func() {
+			for scheduler.Length() > 0 {
+			}
+			done <- true
+			scheduler.Stop()
+		}()
+
+		select {
+		case <-timeout:
+			t.Fatal("test timed out")
+		case <-done:
+			got := device.output
+			if got != docContent {
+				t.Errorf("got %q want %q", got, docContent)
+			}
+		}
+
+	})
+}
+
 func assertDocument(t *testing.T, got, want document.Document) {
 	t.Helper()
 
 	if got != want {
 		t.Errorf("got %q want %q", got, want)
 	}
+}
+
+type SpyDevice struct {
+	output string
+}
+
+func (s *SpyDevice) Print(doc document.Document) string {
+	s.output = doc.Content()
+	return ""
 }

@@ -2,7 +2,7 @@ package devices
 
 import "github.com/barbourkd/docdeliver/document"
 
-// ReturnPrinter is our super basic printer that returns the doc contents
+// ReturnPrinter is a super basic printer that simply returns the doc contents
 type ReturnPrinter struct {
 	name string
 }

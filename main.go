@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/barbourkd/docdeliver/document"
@@ -14,8 +13,11 @@ func main() {
 
 	scheduler.Enqueue(document)
 
-	for scheduler.Length() > 0 {
-		fmt.Printf("%d document(s) are currently scheduled\n", scheduler.Length())
-		time.Sleep(2 * time.Second)
-	}
+	scheduler.Start()
+
+	time.Sleep(5 * time.Second)
+
+	scheduler.Stop()
+
+	time.Sleep(5 * time.Second)
 }
