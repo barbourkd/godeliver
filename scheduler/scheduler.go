@@ -83,3 +83,8 @@ func (s *Scheduler) AddDevice(device devices.Device) {
 func (s *Scheduler) Length() int {
 	return len(s.queue)
 }
+
+// Devices returns all devices in the scheduler
+func (s *Scheduler) Devices() []devices.Device {
+	return s.devices
+}

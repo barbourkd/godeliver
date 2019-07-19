@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/barbourkd/docdeliver/config"
-	"github.com/barbourkd/docdeliver/devices"
 	"github.com/barbourkd/docdeliver/document"
 	"github.com/barbourkd/docdeliver/scheduler"
 	"github.com/kataras/iris"
@@ -14,8 +13,7 @@ import (
 const configFile = "resources/sample.cfg"
 
 func main() {
-	app := iris.Default()
-
+	// Read config
 	config, err := config.ParseConfig(configFile)
 
 	if err != nil {
@@ -24,8 +22,7 @@ func main() {
 		return
 	}
 
-	fmt.Printf("Running with config %q\n", config.Title)
-
+	// Create devices from config - move to web app soon
 	deviceMap, err := config.GenerateDevices()
 
 	if err != nil {
@@ -34,26 +31,17 @@ func main() {
 		return
 	}
 
+	// start scheduler and add devices
 	scheduler := scheduler.Scheduler{}
-
 	for d := range deviceMap {
 		scheduler.AddDevice(deviceMap[d])
 	}
-
-	doc := document.NewDocument("This is a doc!", "This is contents!")
-	scheduler.Enqueue(doc)
-
 	scheduler.Start()
 
-	oneDevice := devices.NewReturnPrinter("this is")
-	oneDevice.Status = "Active"
-	twoDevice := devices.NewReturnPrinter("from the back-end!")
-	twoDevice.Status = "Inactive"
-
+	// Web app config and start
+	app := iris.Default()
 	app.Get("/devices", func(ctx iris.Context) {
-		results := []devices.Device{}
-		results = append(results, oneDevice)
-		results = append(results, twoDevice)
+		results := scheduler.Devices()
 
 		ctx.Header("Access-Control-Allow-Origin", "*")
 		ctx.JSON(results)
@@ -70,45 +58,5 @@ func main() {
 		}
 	})
 
-	//	app.Post("/somePost", posting)
-
 	app.Run(iris.Addr(":8081"))
 }
-
-/*
-	config, err := config.ParseConfig(configFile)
-
-	if err != nil {
-		fmt.Print("Error reading config, aborting\n")
-		fmt.Printf("Error: %q\n", err)
-		return
-	}
-
-	fmt.Printf("Running with config %q\n", config.Title)
-
-	deviceMap, err := config.GenerateDevices()
-
-	if err != nil {
-		fmt.Printf("Invalid configuration")
-		fmt.Printf("Error: %q\n", err)
-		return
-	}
-
-	scheduler := scheduler.Scheduler{}
-
-	for d := range deviceMap {
-		scheduler.AddDevice(deviceMap[d])
-	}
-
-	document := document.NewDocument("This is a doc!", "This is contents!")
-	scheduler.Enqueue(document)
-
-	scheduler.Start()
-
-	time.Sleep(5 * time.Second)
-
-	scheduler.Stop()
-
-	time.Sleep(5 * time.Second)
-}
-*/
