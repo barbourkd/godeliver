@@ -1,32 +1,37 @@
 package main
 
-import (
-	"github.com/kataras/iris"
-	"github.com/kataras/iris/middleware/logger"
-	"github.com/kataras/iris/middleware/recover"
-)
+const configFile = "resources/sample.cfg"
 
 func main() {
-	app := iris.New()
 
-	app.Logger().SetLevel("debug")
-
-	app.Use(recover.New())
-	app.Use(logger.New())
-
-	// Method: GET
-	// Resource: http://localhost:8080
-	app.Handle("GET", "/", func(ctx iris.Context) {
-		ctx.HTML("<h1>Welcome to DocDeliver</h1>")
-	})
-
-	app.Run(iris.Addr(":8080"), iris.WithoutServerError(iris.ErrServerClosed))
 }
 
-/* - NON WEB STUFF - TBF
-	scheduler := scheduler.Scheduler{}
-	document := document.NewDocument("This is a doc!", "This is contents!")
+/*
+	config, err := config.ParseConfig(configFile)
 
+	if err != nil {
+		fmt.Print("Error reading config, aborting\n")
+		fmt.Printf("Error: %q\n", err)
+		return
+	}
+
+	fmt.Printf("Running with config %q\n", config.Title)
+
+	deviceMap, err := config.GenerateDevices()
+
+	if err != nil {
+		fmt.Printf("Invalid configuration")
+		fmt.Printf("Error: %q\n", err)
+		return
+	}
+
+	scheduler := scheduler.Scheduler{}
+
+	for d := range deviceMap {
+		scheduler.AddDevice(deviceMap[d])
+	}
+
+	document := document.NewDocument("This is a doc!", "This is contents!")
 	scheduler.Enqueue(document)
 
 	scheduler.Start()
@@ -37,5 +42,4 @@ func main() {
 
 	time.Sleep(5 * time.Second)
 }
-
 */

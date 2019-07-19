@@ -22,7 +22,7 @@ func (s *Scheduler) Start() {
 
 	go func() {
 		for s.running {
-			fmt.Printf("Scheduler Running:\n%d docs in queue\n\n", s.Length())
+			//fmt.Printf("Scheduler Running:\n%d docs in queue\n\n", s.Length())
 
 			// We have docs to schedule!!!
 			if len(s.queue) > 0 && len(s.devices) > 0 {

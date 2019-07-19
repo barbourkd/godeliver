@@ -7,7 +7,7 @@ import (
 )
 
 func TestReturnPrinter(t *testing.T) {
-	printer := ReturnPrinter{name: "Test Printer"}
+	printer := NewReturnPrinter("Test Printer")
 	doc := document.NewDocument("Name", "Content")
 
 	got := printer.Print(doc)
