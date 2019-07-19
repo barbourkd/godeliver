@@ -1,7 +1,10 @@
 package config
 
 import (
+	"errors"
+
 	"github.com/BurntSushi/toml"
+	"github.com/barbourkd/docdeliver/devices"
 )
 
 // BaseConfig holds our basic configuration details
@@ -23,4 +26,22 @@ func ParseConfig(fileName string) (BaseConfig, error) {
 	}
 
 	return config, nil
+}
+
+// GenerateDevices returns a map of devices from the config
+func (b *BaseConfig) GenerateDevices() (map[string]devices.Device, error) {
+	deviceMap := map[string]devices.Device{}
+	var err error
+
+	for name, device := range b.Devices {
+		switch device.Type {
+		case "ReturnPrinter":
+			deviceMap[name] = devices.NewReturnPrinter(name)
+		default:
+			err = errors.New("Invalid device type")
+			break
+		}
+
+	}
+	return deviceMap, err
 }

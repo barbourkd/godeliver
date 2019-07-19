@@ -22,9 +22,21 @@ func main() {
 
 	fmt.Printf("Running with config %q\n", config.Title)
 
-	scheduler := scheduler.Scheduler{}
-	document := document.NewDocument("This is a doc!", "This is contents!")
+	deviceMap, err := config.GenerateDevices()
 
+	if err != nil {
+		fmt.Printf("Invalid configuration")
+		fmt.Printf("Error: %q\n", err)
+		return
+	}
+
+	scheduler := scheduler.Scheduler{}
+
+	for d := range deviceMap {
+		scheduler.AddDevice(deviceMap[d])
+	}
+
+	document := document.NewDocument("This is a doc!", "This is contents!")
 	scheduler.Enqueue(document)
 
 	scheduler.Start()
